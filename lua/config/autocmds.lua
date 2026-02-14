@@ -51,3 +51,12 @@ vim.api.nvim_create_autocmd("LspAttach", {
     vim.lsp.inlay_hint.enable()
   end,
 })
+
+vim.api.nvim_create_autocmd('FileType', {
+  callback = function()
+    local ft = vim.bo.filetype
+    if vim.treesitter.get_parser(0, ft) then
+      vim.treesitter.start()
+    end
+  end,
+})
