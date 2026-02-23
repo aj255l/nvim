@@ -3,7 +3,14 @@ return {
     "nvim-treesitter/nvim-treesitter",
     event = { "BufReadPre", "BufNewFile" },
     opts = {
-      ensure_installed = {
+      highlight = {
+        enable = true,
+        additional_vim_regex_highlighting = false,
+      },
+      indent = { enable = true },
+    },
+    config = function()
+      require("nvim-treesitter").install({
         "bash",
         "json",
         "go",
@@ -16,13 +23,8 @@ return {
         "vim",
         "vimdoc",
         "yaml",
-      },
-      highlight = {
-        enable = true,
-        additional_vim_regex_highlighting = false,
-      },
-      indent = { enable = true },
-    },
+      })
+    end,
   },
   {
     "nvim-treesitter/nvim-treesitter-context",
@@ -37,7 +39,7 @@ return {
     event = { "BufReadPre", "BufNewFile" },
     dependencies = "nvim-treesitter/nvim-treesitter",
     config = function()
-      require("nvim-treesitter.configs").setup({
+      require("nvim-treesitter.config").setup({
         textobjects = {
           move = {
             enable = true,
