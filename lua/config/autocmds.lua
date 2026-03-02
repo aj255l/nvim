@@ -33,21 +33,42 @@ vim.api.nvim_create_autocmd({ "VimResized" }, {
 })
 
 vim.api.nvim_create_autocmd("LspAttach", {
-  group = augroup("lsp_actions"),
-  desc = "LSP actions",
-  callback = function()
-    local bufmap = function(mode, lhs, rhs)
-      local opts = { noremap = true, silent = true, buffer = true }
-      vim.keymap.set(mode, lhs, rhs, opts)
+  group = augroup("lsp"),
+  callback = function(args)
+    local client = vim.lsp.get_client_by_id(args.data.client_id)
+    local bufnr = args.buf
+    local opts = { buffer = bufnr, noremap = true, silent = true }
+
+    -- Enable omni completion
+    vim.bo[bufnr].omnifunc = "v:lua.vim.lsp.omnifunc"
+
+    -- See `:help vim.lsp.*` for documentation on any of the below functions
+    vim.keymap.set("n", "gd", vim.lsp.buf.definition, opts)
+    vim.keymap.set("n", "gD", vim.lsp.buf.declaration, opts)
+    vim.keymap.set("n", "gi", vim.lsp.buf.implementation, opts)
+    vim.keymap.set("n", "gY", vim.lsp.buf.type_definition, opts)
+    vim.keymap.set("n", "gr", vim.lsp.buf.references, opts)
+    vim.keymap.set("n", "<space>ci", vim.lsp.buf.incoming_calls, opts)
+    vim.keymap.set("n", "<space>co", vim.lsp.buf.outgoing_calls, opts)
+    vim.keymap.set("n", "<space>h", vim.lsp.buf.hover, opts)
+    -- * highlights the current symbol under the cursor, <leader>* renames it
+    vim.keymap.set("n", "<space>*", vim.lsp.buf.rename, opts)
+    vim.keymap.set("n", "<space>j", vim.lsp.buf.code_action, opts)
+    -- Diagnostics
+    vim.keymap.set("n", "<space>e", function()
+      vim.diagnostic.open_float()
+    end, opts)
+    vim.keymap.set("n", "[d", vim.diagnostic.goto_prev, opts)
+    vim.keymap.set("n", "]d", vim.diagnostic.goto_next, opts)
+    -- My old mapping for formatting with clang-format was <space>c, so I use it for LSP as well :-)
+    if client.name ~= "clangd" then
+      -- <space>c is already mapped to the more reliable :ClangFormat for clangd
+      vim.keymap.set("n", "<space>c", vim.lsp.buf.format, opts)
     end
 
-    bufmap("n", "<leader>h", "<cmd>lua vim.lsp.buf.hover()<cr>")
-    bufmap("n", "<leader>ds", "<cmd>lua vim.lsp.buf.signature_help()<cr>")
-    bufmap("n", "<leader>gr", "<cmd>lua vim.lsp.buf.references()<cr>")
-    bufmap("n", "<leader>r", "<cmd>lua vim.lsp.buf.rename()<cr>")
-    bufmap("n", "<leader>do", "<cmd>lua vim.diagnostic.open_float()<cr>")
-    bufmap("n", "<leader>da", "<cmd>lua vim.lsp.buf.code_action()<cr>")
-
-    vim.lsp.inlay_hint.enable()
+    -- Inlay hints for rust-analyzer
+    if client.name == "rust-analyzer" then
+      vim.lsp.inlay_hint.enable(true, { bufnr = bufnr })
+    end
   end,
 })
