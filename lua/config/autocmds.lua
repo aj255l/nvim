@@ -70,5 +70,27 @@ vim.api.nvim_create_autocmd("LspAttach", {
     if client.name == "rust-analyzer" then
       vim.lsp.inlay_hint.enable(true, { bufnr = bufnr })
     end
+
+    -- which-key configs
+    local wk = require("which-key")
+
+    wk.add({
+      { "<leader>g", group = "LSP Go-To", buffer = bufnr },
+      { "<leader>gd", desc = "Go to definition", buffer = bufnr },
+      { "<leader>gD", desc = "Go to declaration", buffer = bufnr },
+      { "<leader>gi", desc = "Go to implementation", buffer = bufnr },
+      { "<leader>gY", desc = "Go to type definition", buffer = bufnr },
+      { "<leader>gr", desc = "Go to references", buffer = bufnr },
+
+      { "<leader>c", group = "LSP Calls", buffer = bufnr },
+      { "<leader>ci", desc = "Incoming Calls", buffer = bufnr },
+      { "<leader>co", desc = "Outgoing Calls", buffer = bufnr },
+
+      { "<leader>h", desc = "Hover", buffer = bufnr },
+      { "<leader>*", desc = "Rename Symbol", buffer = bufnr },
+      { "<leader>j", desc = "Code Action", buffer = bufnr },
+
+      { "<leader>e", desc = "Line Diagnostics", buffer = bufnr },
+    }, { buffer = bufnr })
   end,
 })

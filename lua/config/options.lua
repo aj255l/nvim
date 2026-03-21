@@ -8,8 +8,8 @@ vim.opt.mouse = "a"
 vim.opt.showmode = false
 
 -- Show line numbers and relative numbers
-vim.wo.number = true
-vim.wo.relativenumber = true
+vim.opt.number = true
+vim.opt.relativenumber = false
 
 -- Set tab to 4 spaces
 vim.opt["tabstop"] = 4

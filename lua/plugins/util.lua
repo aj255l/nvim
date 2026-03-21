@@ -30,4 +30,8 @@ return {
   {
     "tpope/vim-dispatch", -- Make compilation async
   },
+  {
+    "shrynx/line-numbers.nvim", -- Relative and absolute line numbers
+    opts = {},
+  },
 }
